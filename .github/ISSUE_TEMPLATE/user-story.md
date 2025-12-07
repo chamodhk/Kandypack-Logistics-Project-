@@ -16,9 +16,9 @@ assignees: ''
 
 ### Acceptance criteria 
 
-```gherkins
-GIven 
-When
-And
-Then
+```gherkin
+Given [some context]
+When [certain action happen]
+And [optional - more context]
+Then [the outcome of action is observed]
 ````

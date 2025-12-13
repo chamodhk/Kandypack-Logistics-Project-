@@ -69,7 +69,7 @@ def create_product_type(product_type: ProductTypeCreate, user_role: str):
         conn.close()
 
 
-def get_products(role: str, store_id: int):
+def get_products():
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     try:

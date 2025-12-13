@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `kandypack3` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `kandypack3`;
+CREATE DATABASE  IF NOT EXISTS `kandypack4` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `kandypack4`;
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: kandypack2
@@ -266,7 +266,7 @@ CREATE TABLE `roles` (
   `role_name` varchar(50) NOT NULL,
   `max_hours_week` double NOT NULL,
   PRIMARY KEY (`role_id`),
-  CONSTRAINT `roles_chk_1` CHECK ((`max_hours_week` > 0))
+  CONSTRAINT `roles_chk_1` CHECK ((`max_hours_week` >= 0))
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

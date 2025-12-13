@@ -3,6 +3,7 @@ import os
 import subprocess 
 from pathlib import Path 
 from dotenv import load_dotenv
+from .seeds import seed_all
 
 load_dotenv() 
 
@@ -49,3 +50,5 @@ def run_schema_once():
     input=SCHEMA_FILE.read_bytes(),
     check=True,
     )
+
+    seed_all()

@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `kandypacklogistics` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `kandypacklogistics`;
+CREATE DATABASE  IF NOT EXISTS `kandypack3` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `kandypack3`;
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: kandypacklogistics
+-- Host: 127.0.0.1    Database: kandypack2
 -- ------------------------------------------------------
 -- Server version	8.0.42
 
@@ -65,7 +65,7 @@ CREATE TABLE `customer` (
   PRIMARY KEY (`customer_id`),
   KEY `idx_customer_type` (`customer_type_id`),
   CONSTRAINT `customer_ibfk_2` FOREIGN KEY (`customer_type_id`) REFERENCES `customertype` (`customer_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,7 +88,7 @@ CREATE TABLE `customeraddress` (
   KEY `idx_customer_address` (`customer_id`,`city_id`),
   CONSTRAINT `customeraddress_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON DELETE CASCADE,
   CONSTRAINT `customeraddress_ibfk_2` FOREIGN KEY (`city_id`) REFERENCES `city` (`city_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -168,7 +168,7 @@ CREATE TABLE `employee` (
   KEY `idx_employee_status` (`employee_status`),
   CONSTRAINT `employee_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`),
   CONSTRAINT `employee_ibfk_3` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -189,6 +189,7 @@ CREATE TABLE `order` (
   `packed_date` datetime DEFAULT NULL,
   `total_quantity` int DEFAULT '0',
   `total_price` decimal(10,2) DEFAULT '0.00',
+  `total_space` decimal(10,2) DEFAULT '0.00',
   PRIMARY KEY (`order_id`),
   KEY `idx_order_customer` (`customer_id`),
   KEY `idx_order_date` (`order_date`),
@@ -197,7 +198,7 @@ CREATE TABLE `order` (
   CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
   CONSTRAINT `order_ibfk_2` FOREIGN KEY (`address_id`) REFERENCES `customeraddress` (`address_id`),
   CONSTRAINT `order_chk_1` CHECK ((`required_date` >= (`order_date` + interval 7 day)))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -307,7 +308,7 @@ CREATE TABLE `train` (
   PRIMARY KEY (`train_id`),
   KEY `template_id` (`template_id`),
   CONSTRAINT `train_ibfk_1` FOREIGN KEY (`template_id`) REFERENCES `traintemplate` (`template_id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=431 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -329,6 +330,7 @@ CREATE TABLE `trainallocation` (
   `status` varchar(30) DEFAULT 'Allocated',
   `unit_space` double NOT NULL,
   `total_space_used` double GENERATED ALWAYS AS ((`allocated_qty` * `unit_space`)) STORED,
+  `finalized` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`trip_id`),
   KEY `order_id` (`order_id`,`product_id`),
   KEY `store_id` (`store_id`),
@@ -336,7 +338,7 @@ CREATE TABLE `trainallocation` (
   CONSTRAINT `trainallocation_ibfk_1` FOREIGN KEY (`train_id`) REFERENCES `train` (`train_id`) ON DELETE CASCADE,
   CONSTRAINT `trainallocation_ibfk_2` FOREIGN KEY (`order_id`, `product_id`) REFERENCES `orderitem` (`order_id`, `product_id`) ON DELETE CASCADE,
   CONSTRAINT `trainallocation_ibfk_3` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +359,7 @@ CREATE TABLE `traintemplate` (
   `status` varchar(20) DEFAULT 'on-time',
   `frequency_days` varchar(100) NOT NULL DEFAULT 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
   PRIMARY KEY (`template_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -406,7 +408,7 @@ CREATE TABLE `truckdelivery` (
   CONSTRAINT `truckdelivery_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
   CONSTRAINT `truckdelivery_ibfk_3` FOREIGN KEY (`route_id`) REFERENCES `truckroute` (`route_id`),
   CONSTRAINT `truckdelivery_ibfk_4` FOREIGN KEY (`truck_id`) REFERENCES `truck` (`truck_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -426,7 +428,7 @@ CREATE TABLE `truckemployeeassignment` (
   KEY `idx_assignment_delivery` (`truck_delivery_id`),
   CONSTRAINT `truckemployeeassignment_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`),
   CONSTRAINT `truckemployeeassignment_ibfk_2` FOREIGN KEY (`truck_delivery_id`) REFERENCES `truckdelivery` (`delivery_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -555,7 +557,7 @@ CREATE TABLE `truckstopsat` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping events for database 'kandypacklogistics'
+-- Dumping events for database 'kandypack2'
 --
 /*!50106 SET @save_time_zone= @@TIME_ZONE */ ;
 /*!50106 DROP EVENT IF EXISTS `generate_trains_rolling_14d` */;
@@ -570,7 +572,7 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `generate_trains_rolling_14d` ON SCHEDULE EVERY 1 DAY STARTS '2025-10-21 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `generate_trains_rolling_14d` ON SCHEDULE EVERY 1 DAY STARTS '2025-10-22 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
   CALL sp_populate_trains_for_next_n_days(14);
 END */ ;;
 /*!50003 SET time_zone             = @saved_time_zone */ ;;
@@ -582,8 +584,99 @@ DELIMITER ;
 /*!50106 SET TIME_ZONE= @save_time_zone */ ;
 
 --
--- Dumping routines for database 'kandypacklogistics'
+-- Dumping routines for database 'kandypack2'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `assign_truck_delivery` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `assign_truck_delivery`(
+    IN p_store_id INT,
+    IN p_order_id INT,
+    IN p_route_id VARCHAR(5),
+    IN p_truck_id INT,
+    IN p_driver_id INT,
+    IN p_assistant_id INT,
+    IN p_scheduled_departure DATETIME
+)
+BEGIN
+    DECLARE v_delivery_id INT;
+    DECLARE v_assigned_hours DOUBLE;
+
+    -- 1️⃣ Get route hours from truckroute
+    SELECT max_delivery_time INTO v_assigned_hours
+    FROM truckroute
+    WHERE route_id = p_route_id;
+
+    -- 2️⃣ Insert new delivery record
+    INSERT INTO truckdelivery (
+        store_id,
+        order_id,
+        route_id,
+        truck_id,
+        scheduled_departure,
+        status
+    )
+    VALUES (
+        p_store_id,
+        p_order_id,
+        p_route_id,
+        p_truck_id,
+        p_scheduled_departure,
+        'Scheduled'
+    );
+
+    -- 3️⃣ Get the new delivery_id
+    SET v_delivery_id = LAST_INSERT_ID();
+
+    -- 4️⃣ Insert driver assignment
+    INSERT INTO truckemployeeassignment (
+        employee_id,
+        truck_delivery_id,
+        assigned_hours
+    )
+    VALUES (
+        p_driver_id,
+        v_delivery_id,
+        v_assigned_hours
+    );
+
+    -- 5️⃣ Insert assistant assignment (if provided)
+    IF p_assistant_id IS NOT NULL AND p_assistant_id <> 0 THEN
+        INSERT INTO truckemployeeassignment (
+            employee_id,
+            truck_delivery_id,
+            assigned_hours
+        )
+        VALUES (
+            p_assistant_id,
+            v_delivery_id,
+            v_assigned_hours
+        );
+    END IF;
+
+    -- 6️⃣ Update truck to unavailable
+    UPDATE truck
+    SET is_available = 0
+    WHERE truck_id = p_truck_id;
+
+    -- 7️⃣ Return success message
+    SELECT 
+        v_delivery_id AS delivery_id,
+        'Truck delivery assigned successfully' AS message;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `finish_truck_delivery` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -753,6 +846,68 @@ BEGIN
         FROM employee e
         WHERE e.employee_id = emp_id;
     END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetOrdersAtStore` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOrdersAtStore`(IN input_store_id INT)
+BEGIN
+    SELECT 
+        o.order_id,
+        o.customer_id,
+        o.address_id,
+        o.status,
+        o.total_quantity
+    FROM `order` o
+    INNER JOIN trainallocation ta ON o.order_id = ta.order_id
+    WHERE ta.store_id = input_store_id
+      AND o.status = 'at the store';
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetPendingTrainAllocations` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetPendingTrainAllocations`(IN input_store_id INT)
+BEGIN
+    SELECT 
+        trip_id,
+        train_id,
+        order_id,
+        product_id,
+        store_id,
+        allocated_qty,
+        start_date_time,
+        reached_date_time,
+        status,
+        unit_space,
+        total_space_used
+    FROM trainallocation
+    WHERE store_id = input_store_id
+      AND (reached_date_time IS NULL OR status != 'at the store')
+    ORDER BY start_date_time ASC;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1058,6 +1213,51 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `MarkTrainAtStore` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `MarkTrainAtStore`(IN input_trip_id INT)
+BEGIN
+    DECLARE affected_orders INT DEFAULT 0;
+    DECLARE affected_trips INT DEFAULT 0;
+
+    -- Start transaction
+    START TRANSACTION;
+
+    -- Update orders only if the train allocation is finalized
+    UPDATE `order` o
+    INNER JOIN trainallocation ta 
+        ON o.order_id = ta.order_id
+        AND ta.finalized = TRUE  -- only finalized allocations
+    SET o.status = 'at the store'
+    WHERE ta.train_id = input_trip_id
+      AND o.status != 'at the store';
+
+    SET affected_orders = ROW_COUNT();
+
+    -- Update train allocation rows
+    UPDATE trainallocation
+    SET status = 'at the store',
+        reached_date_time = NOW()
+    WHERE train_id = input_trip_id
+      AND status != 'at the store';
+
+    SET affected_trips = ROW_COUNT();
+
+    COMMIT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_populate_trains_for_next_n_days` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1129,4 +1329,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-08  2:37:23
+-- Dump completed on 2025-12-13 10:31:44

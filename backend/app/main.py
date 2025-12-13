@@ -1,12 +1,23 @@
 from fastapi import FastAPI
 from app.routers import orders, trains, reports,products, employees, auth, drivers, trucks, stores, cities, customers1, customers, customertypes, dashbord, truck_delivery
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+from .db import bootstrap
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup 
+    bootstrap.run_schema_once()
+    yield 
+    # Shutdown 
 
 app = FastAPI (
     title="Kandypack Logistics Backend",
     description="Rail and road supply chain distribution system",
-    version='1.0.0' 
+    version='1.0.0' ,
+    lifespan=lifespan
 )
+
 
 app.add_middleware(
     CORSMiddleware,
